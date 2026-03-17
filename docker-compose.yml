@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: mes-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build: .
+    container_name: mes-web
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./app:/app/app:ro
+      - ./data:/app/data  # For SQLite database file
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build: .
+    container_name: mes-worker
+    env_file:
+      - .env
+    command: celery -A app.tasks.celery_app worker --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./app:/app/app:ro
+      - ./data:/app/data  # For SQLite database file
+
+  beat:
+    build: .
+    container_name: mes-beat
+    env_file:
+      - .env
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./app:/app/app:ro
+      - ./data:/app/data  # For SQLite database file
+
+volumes:
+  redis_data:

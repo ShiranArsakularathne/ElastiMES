@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MES System - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-industry" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <h1>MES System</h1>
+            </div>
+            
+            <div class="menu">
+                <div class="menu-section">
+                    <div class="menu-header">MAIN MENU</div>
+                    <ul class="menu-items">
+                        <li class="menu-item active" data-module="home">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </li>
+                        <li class="menu-item" data-module="wrp">
+                            <i class="fas fa-spinner"></i>
+                            <span>WRP</span>
+                        </li>
+                        <li class="menu-item" data-module="loom">
+                            <i class="fas fa-cogs"></i>
+                            <span>LOOM</span>
+                        </li>
+                        <li class="menu-item" data-module="range">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>RANGE</span>
+                        </li>
+                        <li class="menu-item" data-module="exhst">
+                            <i class="fas fa-wind"></i>
+                            <span>EXHST</span>
+                        </li>
+                        <li class="menu-item" data-module="pack">
+                            <i class="fas fa-box"></i>
+                            <span>PACK</span>
+                        </li>
+                        <li class="menu-item" data-module="inspc">
+                            <i class="fas fa-search"></i>
+                            <span>INSPC</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <div class="menu-header">SYSTEM</div>
+                    <ul class="menu-items">
+                        <li class="menu-item" data-module="users">
+                            <i class="fas fa-users"></i>
+                            <span>USERS</span>
+                        </li>
+                        <li class="menu-item" data-module="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </li>
+                        <li class="menu-item" data-module="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <span id="userInitials">OP</span>
+                </div>
+                <div>
+                    <div id="userName">Operator</div>
+                    <div style="font-size: 0.8rem; color: #bdc3c7;">Production Floor</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="header-actions">
+                    <div class="hardware-status" style="margin: 0; padding: 0; background: none; box-shadow: none;">
+                        <div class="status-item">
+                            <div class="status-indicator online" id="plcStatus"></div>
+                            <span>PLC</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-indicator online" id="rfidStatus"></div>
+                            <span>RFID</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-indicator online" id="barcodeStatus"></div>
+                            <span>Barcode</span>
+                        </div>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="content" id="contentArea">
+                <!-- Content loaded dynamically by JavaScript -->
+                <div class="dashboard">
+                    <h2>Dashboard</h2>
+                    <div class="hardware-status">
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <span>PLC: Online</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <span>RFID: Online</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-indicator online"></div>
+                            <span>Barcode Scanner: Online</span>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="card">
+                            <h3>Today's Production</h3>
+                            <p class="stat-value">245</p>
+                            <p class="stat-label">Beams</p>
+                        </div>
+                        <div class="card">
+                            <h3>Active Machines</h3>
+                            <p class="stat-value">12</p>
+                            <p class="stat-label">Running</p>
+                        </div>
+                        <div class="card">
+                            <h3>Pending Tasks</h3>
+                            <p class="stat-value">8</p>
+                            <p class="stat-label">To Complete</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+    <script>
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('mes_token');
+            localStorage.removeItem('mes_user');
+            window.location.href = 'login.html';
+        });
+        
+        // Load user info
+        const userData = JSON.parse(localStorage.getItem('mes_user') || '{"username": "operator"}');
+        document.getElementById('userName').textContent = userData.username || 'Operator';
+        document.getElementById('userInitials').textContent = (userData.username || 'OP').substring(0, 2).toUpperCase();
+    </script>
+</body>
+</html>
